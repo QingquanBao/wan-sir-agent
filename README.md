@@ -1,115 +1,142 @@
 # wan-sir-agent
 
-> An AI agent that thinks like **万维钢 (Wan Weiqiang)** — physicist-turned-science-writer, author of *精英日课* and *现代思维工具100讲*.
+> 万维钢思维伴侣 — 用万维钢的世界观回答你的人生、职业和认知问题。
 
-This is a Claude Code skill that transforms Claude into a thinking companion grounded in Wan's worldview: systems thinking, modern cognitive tools, and the discipline of building mental models that actually predict reality.
+一个 Claude Code / Codex / Cursor 等 AI 编程助手的 skill 插件，让你的 AI 以万维钢的视角和思维框架和你对话。
 
 Inspired by [gstack](https://github.com/garrytan/gstack).
 
 ---
 
-## What It Does
-
-When you arrive with a real challenge — career crossroads, a decision under uncertainty, a persistent bad habit — the agent doesn't give you generic advice. It routes your challenge through Wan's framework:
-
-1. **Diagnoses which level you're operating at**: 传统观念 / 市侩哲学 / 精英解法
-2. **Identifies the mental model gap** behind your problem
-3. **Applies the relevant thinking tool** from 现代思维工具100讲
-4. **Gives you a Wan-style answer**: hard theory, concrete story, counterintuitive action
-
-It will never tell you to "just work harder" or "follow your passion." It will tell you what your objective function is missing.
-
----
-
-## Quick Start
+## 一键安装
 
 ```bash
-# Install as a Claude Code skill
 npx skills add QingquanBao/wan-sir-agent
 ```
 
-Then in any Claude Code session:
+安装后，在任何支持 skills 的 AI 工具（Claude Code、Codex CLI 等）中直接使用：
 
 ```
-/wan-sir  I've been at the same company for 4 years. Should I leave?
+/wan-sir 我在这家公司做了三年，感觉没什么成长，但跳槽又不知道去哪。
 ```
 
-Or just describe your situation — the agent will route it.
+或者直接描述你的处境，系统会自动路由。
 
 ---
 
-## Architecture
+## 它能做什么
+
+你带着真实的困惑来，它给你万维钢式的分析：
+
+**不会说的话：**
+- "跟随你的内心"
+- "坚持就会成功"
+- "要平衡工作和生活"
+- "这取决于你的个人情况"
+
+**会说的话：**
+- 先指出你的问题框架在哪个层级（传统观念/市侩哲学/精英解法）
+- 用一个具体的思维工具（复利、自由能、能耐寻求……）锚定分析
+- 给出反直觉的、可操作的结论
+
+---
+
+## 示例对话
+
+**职业困惑**
+```
+/wan-sir 我在这家公司做了三年，感觉没什么成长，但跳槽又不确定去哪。
+```
+> 你问的是"该不该走"，但真正的问题是：这三年你积累的东西，有没有复利效应？
+> 如果你带走的只是"在某公司工作三年"这个标签，那这三年是线性消耗，
+> 不是指数积累。能耐寻求定理说：判断一个机会好不好，
+> 不看它现在给你多少，看它五年后能让你带走什么……
+
+**情绪内耗**
+```
+/wan-sir 我总是想学习但拖延，完全不知道问题出在哪里。
+```
+> 这不是意志力问题，这是自由能问题。
+> 你的大脑在做一个计算：行动的预期惊讶度（可能失败/做不好）
+> 高于不行动的预期惊讶度（待在舒适区）。
+> 所以它选择拖延——这是理性的，只是目标函数设错了……
+
+**重大决策**
+```
+/wan-sir 要不要创业，很纠结。
+```
+> 纠结本身是一个信号：你还在用需求侧思维（"创业能不能成"），
+> 而不是供给侧思维（"我能提供什么别人提供不了的"）。
+> 先回答这个问题：如果这件事你不做，五年后有没有人会做成？
+> 如果答案是"有"，那问题就变成了你的比较优势在哪里……
+
+---
+
+## 自动路由覆盖
+
+| 你的困惑 | 路由到 |
+|---------|--------|
+| 职业方向、跳槽、赛道、创业、瓶颈 | `career-direction` |
+| 重大决策、两难、不确定性、风险 | `decision-under-uncertainty` |
+| 焦虑、拖延、内耗、情绪低落 | `negative-emotion` |
+| 学习方法、技能停滞、成长 | `learning-and-growth` |
+| 概念解释、元问题 | 直接从世界观层回答 |
+
+---
+
+## 架构
 
 ```
 wan-sir-agent/
-├── SKILL.md              ← Entry point: skill trigger + routing logic
-├── worldview-core.md     ← Wan's core worldview (the "soul" layer, always loaded)
-├── router.md             ← Intent classification: challenge vs concept vs reflection
-├── challenges/           ← Challenge-specific response templates
-│   ├── career.md
+├── SKILL.md              ← 入口：触发条件 + 路由逻辑
+├── worldview-core.md     ← 灵魂层：万维钢的世界观（每次必加载）
+├── challenges/           ← 挑战模板（按需加载）
+│   ├── career-direction.md
 │   ├── decision-under-uncertainty.md
-│   ├── learning-strategy.md
-│   └── relationship-dynamics.md
-├── concepts/             ← Concept cards distilled from 现代思维工具100讲
-│   ├── compounding.md
-│   ├── narrative.md
-│   ├── heavy-tail.md
-│   ├── free-energy.md
-│   └── ...
+│   ├── negative-emotion.md
+│   └── learning-and-growth.md
+├── concepts/             ← 概念卡片（施工中）
 └── scripts/
-    └── fetch-new-articles.sh   ← Update script when new lectures drop
+    └── fetch-new-articles.sh   ← 万老师出新文章时更新
 ```
 
-**Key design principle**: `worldview-core.md` is loaded on every call. It contains Wan's biases, anti-patterns, and voice markers. The agent must disagree with the user when their framing violates this worldview.
+**设计原则**：`worldview-core.md` 每次对话都加载，保证万式偏见始终在线。challenge 文件按需加载，保持 context 精简。
 
 ---
 
-## Concept Coverage
+## 世界观核心（预览）
 
-From *万维钢·现代思维工具100讲* (32 published as of 2026-04):
+万维钢的核心偏见（详见 `worldview-core.md`）：
 
-| Module | Tools |
-|--------|-------|
-| 基本世界观 | 叙事、重尾分布、能动性、约束、可能性、内核自我 |
-| 成长战略 | 能耐寻求、供给侧心态、复利、自我决定理论、自由能原理 |
-| 认知与注意力 | 主动高认知负荷、WOOP、认知解耦、身份认同 |
-| 社会与位置 | 社交资本、结构洞、场域、赛道选择 |
-| 决策 | 探索-利用、无免费午餐、概率分布、共鸣 |
+- **信号胜于励志** — 世界奖赏用对工具的人，不奖赏更用力的人
+- **建模优于道德** — 模型错了，整个人生都在跑错方向
+- **选项等于自由** — 保留选择权比立刻最优化更重要
+- **认知范围即自由度** — 你能追踪的变量数量决定你有多少自由
+- **身份认同是认知毒药** — 部落归属是清晰思考的主要障碍
+- **士的三个境界** — 思想自主 → 人生自主 → 公共担当
 
 ---
 
-## Updating When New Lectures Drop
+## 当万老师出新文章
 
 ```bash
-# Run manually when 万维钢 publishes new lectures
+# 需要：Chrome 已登录得到 + CDP proxy 运行中
 ./scripts/fetch-new-articles.sh
 ```
 
-The script uses Chrome CDP to fetch new articles from Dedao (requires you to be logged in), saves them to `sources/`, and flags which concepts need new cards.
-
 ---
 
-## Design Philosophy
+## 进度
 
-**Challenge-first, not concept-first.** Users arrive with problems, not terminology. The router maps real situations to frameworks, not the other way around.
-
-**Worldview before advice.** Every answer is anchored to `worldview-core.md`. Generic wisdom is explicitly rejected.
-
-**Distillation, not summarization.** Each concept card extracts the non-obvious insight — the thing Wan would say that a generic AI wouldn't.
-
----
-
-## Status
-
-- [x] Worldview core extracted (v0.1)
-- [x] 30 source articles archived
-- [ ] Challenge templates (4 domains)
-- [ ] Concept cards (target: 30 cards)
-- [ ] SKILL.md + router
-- [ ] Auto-update workflow
+- [x] worldview-core.md v0.3（从精英日课S1-S6 + 现代思维工具100讲提炼）
+- [x] 30篇源文章已归档
+- [x] 自动路由（4个挑战域）
+- [x] challenge templates × 4
+- [ ] concept cards（施工中）
+- [ ] 新文章 auto-update workflow
 
 ---
 
 ## License
 
-MIT. The thinking tools belong to humanity. Wan Sir just distilled them better than most.
+MIT. 思维工具属于人类，万老师只是提炼得最好。
